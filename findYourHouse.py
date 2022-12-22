@@ -4,11 +4,8 @@ import folium
 import pandas as pd
 import PublicDataReader as pdr
 import requests
-from auth import geocodeKey, myKey
+from auth import geocodeKey, serviceKey
 from folium.plugins import MarkerCluster
-
-# 2. 공공 데이터 포털 OpenAPI 서비스 인증키 입력하기
-serviceKey = myKey
 
 # 3. 국토교통부 실거래가 정보 조회 OpenAPI 세션 정의하기
 # debug: True이면 모든 메시지 출력, False이면 오류 메시지만 출력 (기본값: False)
@@ -58,7 +55,7 @@ sigunguNames = []
 num = int(input("몇 군데 정보를 가져오길 원하십니까?"))
 
 sigunguNames = [input("지역구를 입력해주세요. ex) 영등포구") for _ in range(num)]
-months = input("언제부터 자료를 원해요? ex) 202201")
+months = 202001
 for sigunguName in sigunguNames:
     prod = "오피스텔"  # 부동산 상품 종류 (ex. 아파트, 오피스텔, 단독다가구 등)
     trans = "전월세"  # 부동산 거래 유형 (ex. 매매, 전월세)
@@ -69,16 +66,16 @@ for sigunguName in sigunguNames:
     df = pd.concat([df, df1])
 
 
-minsize = round(int(input('몇 평 이상을 원하십니까?')) / 0.3025, 1)
-maxDeposit = int(input('최대 보증금은? (단위: 만원)'))
-maxRent = int(input('최대 월세는?(단위: 만원)'))
-minFloor = int(input('몇 층이상을 원하십니까?'))
+minsize = round(int(input("몇 평 이상을 원하십니까?")) / 0.3025, 1)
+maxDeposit = int(input("최대 보증금은? (단위: 만원)"))
+maxRent = int(input("최대 월세는?(단위: 만원)"))
+minFloor = int(input("몇 층이상을 원하십니까?"))
 
 df = df[
-    df['층'] >= minFloor,
-    df['전용면적'] >= minFloor,
-    df['보증금'] <= maxDeposit,
-    df['월세'] <= maxRent
+    df["층"] >= minFloor,
+    df["전용면적"] >= minFloor,
+    df["보증금"] <= maxDeposit,
+    df["월세"] <= maxRent,
 ]
 
 df["경도"], df["위도"] = (df["시군구"] + " " + df["법정동"] + " " + df["지번"]).apply(geocode)
